@@ -90,5 +90,51 @@ extension Array where Element == Int {
         
         return merge(left.mergeSorted, right.mergeSorted)
     }
+    
+    func heapSorted(reversed: Bool = false) -> Self {
+        var tempList = self
+        var result: [Int] = []
+        
+        for i in stride(from: self.count-1, to:-1, by: -1) {
+            if i == 0 {
+                guard let last = tempList.popLast() else { fatalError() }
+                result.append(last)
+            } else {
+                tempList = makeMaxHeap(tempList)
+                let temp = tempList[0]
+                tempList[0] = tempList[i]
+                tempList[i] = temp
+                guard let last = tempList.popLast() else { fatalError() }
+                result.append(last)
+            }
+        }
+        
+        if reversed == false {
+            result.reverse()
+            return result
+        } else {
+            return result
+        }
+        
+        func makeMaxHeap(_ list: [Int]) -> [Int] {
+            var result = list
+            
+            for i in 1..<list.count{
+                var childNode = i
+                repeat {
+                    let root: Int = (childNode - 1) / 2
+                    if result[root] < result[childNode]{
+                        let temp = result[childNode]
+                        result[childNode] = result[root]
+                        result[root] = temp
+                    }
+                    childNode = root
+                } while (childNode != 0)
+            }
+            
+            return result
+        }
+    }
 }
-print([2,4,1,5,6,7,3,8].mergeSorted)
+
+print([2,4,1,5,6,7,3,8].heapSorted(reversed: true))
